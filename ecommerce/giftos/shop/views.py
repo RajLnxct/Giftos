@@ -8,8 +8,10 @@ from .models import *
 
 # Create your views here.
 def home(request):
+    slider = Slider.objects.all()
     product =Product.objects.all()[:10:3]
     data = {
+        'slider':slider,
         'product':product
     }
     return render(request,'home/index.html',data)

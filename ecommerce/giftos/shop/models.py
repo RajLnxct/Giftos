@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractUser
+from ckeditor.fields import RichTextField
 # Create your models here.
-
+# Product Model
 CATEGORY_CHOICES = (
     ('T', 'Teddy'),
     ('W', 'Watch'),
@@ -19,7 +20,7 @@ class Product(models.Model):
     def __str__(self):
         return self.title
     
-
+# User Model
 class UserManager(BaseUserManager):
 
     def create_user(self, email, password=None, **extra_fields):
@@ -59,12 +60,20 @@ class user(AbstractUser):
 	def __str__(self): 
 		return self.name
     
-
+# Contact Model
 class Contact(models.Model):
     name = models.CharField(max_length=250)
     email = models.EmailField()
     phone = models.CharField(max_length=14)
     message = models.TextField()
+
+    def __str__(self):
+        return self.name
+
+# Slider Model
+class Slider(models.Model):
+    name = models.CharField(max_length=200)
+    image = RichTextField()
 
     def __str__(self):
         return self.name
