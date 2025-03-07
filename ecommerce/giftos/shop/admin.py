@@ -8,9 +8,14 @@ class userModelAdmin(admin.ModelAdmin):
 class ContactModelAdmin(admin.ModelAdmin):
     list_display = ["name", "email", "phone"]
 
+@admin.register(Category)
+class CategoryModelAdmin(admin.ModelAdmin):
+    list_display = ["name"]
+
 @admin.register(Product)
 class ProductModelAdmin(admin.ModelAdmin):
-    list_display = ["title","price"]
+    list_display = ["name","category","price"]
+
 @admin.register(Slider)
 class SliderModelAdmin(admin.ModelAdmin):
     list_display = ["id","name"]

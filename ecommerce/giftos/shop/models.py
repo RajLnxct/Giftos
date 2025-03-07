@@ -1,25 +1,23 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractUser
 from ckeditor.fields import RichTextField
-# Create your models here.
-# Product Model
-CATEGORY_CHOICES = (
-    ('T', 'Teddy'),
-    ('W', 'Watch'),
-    ('P', 'Perfume')
-)
 
-class Product(models.Model):
-    title = models.CharField(max_length=120)
+# Category Model
+class Category(models.Model):
     name = models.CharField(max_length=200)
-    price = models.IntegerField()
-    category = models.CharField(choices=CATEGORY_CHOICES,max_length=200)
-    status = models.CharField(max_length=200)
-    image = models.CharField(max_length=2855)
 
     def __str__(self):
-        return self.title
+        return self.name
     
+# Product Model
+class Product(models.Model):
+    name = models.CharField(max_length=200)
+    price = models.IntegerField()
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    image = models.CharField(max_length=1500)
+
+    def __str__(self):
+        return self.name
 # User Model
 class UserManager(BaseUserManager):
 

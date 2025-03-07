@@ -8,8 +8,8 @@ from .models import *
 
 # Create your views here.
 def home(request):
-    slider = Slider.objects.all()
     product =Product.objects.all()[:10:3]
+    slider = Slider.objects.all()
     data = {
         'slider':slider,
         'product':product
@@ -34,11 +34,35 @@ def contact(request):
     return render(request,'home/contact.html')
 
 def shop(request):
-    product =Product.objects.all()
-    data = {
-        'product':product
+    category = Category.objects.all()
+    products = Product.objects.all()
+   
+    # Search
+    if 'search' in request.GET:
+        search = request.GET['search']
+        products = Product.objects.filter(name__icontains=search) | Product.objects.filter(category__name__icontains=search)
+    else:
+        products = Product.objects.all()
+
+    # Filter by category
+    selected_categories = request.GET.getlist('category')
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+
+    if selected_categories:
+        products = products.filter(category__id__in=selected_categories)
+    
+    if min_price:
+        products = products.filter(price__gte=min_price)
+    
+    if max_price:
+        products = products.filter(price__lte=max_price)
+
+    context = {
+        'category': category,
+        'product': products,
     }
-    return render(request,'home/shop.html',data)
+    return render(request,'home/shop.html',context)
 
 def testimonial(request):
     return render(request,'home/testimonial.html')
