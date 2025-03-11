@@ -14,23 +14,27 @@
         </h2>
       </div>
       <form action="" method="GET">
-        <h2 style="font-size:20px">Category</h2>
-        {% for cate in category %}
-          <div class="form-check" style="margin-top: 20px;">
-            <input class="form-check-input" type="checkbox" name="category" value="{{ cate.id }}" id="flexCheckDefault{{ cate.id }}">
-            <label class="form-check-label" for="flexCheckDefault{{ cate.id }}">
-              {{ cate.name }}
-            </label>
-          </div>
-        {% endfor %}
-        <h2 style="font-size:20px; margin-top: 20px;">Price</h2>
-        <div class="form-group">
-          <label for="minPrice">Min Price</label>
-          <input type="number" class="form-control" id="minPrice" name="min_price" placeholder="0">
+        <div style="border: 1px solid #ccc; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+          <h2 style="font-size:20px">Category</h2>
+          {% for cate in category %}
+        <div class="form-check" style="margin-top: 20px;">
+          <input class="form-check-input" type="checkbox" name="category" value="{{ cate.id }}" id="flexCheckDefault{{ cate.id }}">
+          <label class="form-check-label" for="flexCheckDefault{{ cate.id }}">
+            {{ cate.name }}
+          </label>
         </div>
-        <div class="form-group">
-          <label for="maxPrice">Max Price</label>
-          <input type="number" class="form-control" id="maxPrice" name="max_price" placeholder="10000">
+          {% endfor %}
+        </div>
+        <div style="border: 1px solid #ccc; padding: 15px; border-radius: 5px;">
+          <h2 style="font-size:20px; margin-top: 10px;">Price</h2>
+          <div class="form-group">
+        <label for="minPrice">Min Price</label>
+        <input type="number" class="form-control" id="minPrice" name="min_price" placeholder="0">
+          </div>
+          <div class="form-group">
+        <label for="maxPrice">Max Price</label>
+        <input type="number" class="form-control" id="maxPrice" name="max_price" placeholder="10000">
+          </div>
         </div>
         <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Apply Filters</button>
       </form>
@@ -51,7 +55,7 @@
                   <div class="card-body">
                     <h5 class="card-title">{{ products.name }}</h5>
                     <p class="card-text">₹{{ products.price }}</p>
-                    <a href="#" class="btn btn-primary">Add Cart</a>
+                    <a href="{% url 'shop:addcart' products.id %}" class="btn btn-primary">Add Cart</a>
                   </div>
                 </div>
               </div>

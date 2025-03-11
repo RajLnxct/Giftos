@@ -1,12 +1,13 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect ,get_object_or_404
 from django.contrib.auth import login,logout,authenticate
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.conf import settings
 from .forms import *
 from .models import *
 
-# Create your views here.
+# ------------- Home Func ---------------
 def home(request):
     product =Product.objects.all()[:10:3]
     slider = Slider.objects.all()
@@ -16,6 +17,7 @@ def home(request):
     }
     return render(request,'home/index.html',data)
 
+# ------------- Contact Func ---------------
 def contact(request):
     if request.method=='POST':
         name = request.POST.get('name')
@@ -26,13 +28,14 @@ def contact(request):
         contact_data.save()
         send_mail(
             "Thank YOU",
-            "Thank you for your inquire",
-            "rajpitroda2912@gmail.com",
+            f"Dear {name},\n\nThank you for reaching out to us! We appreciate you taking the time to contact us and we are happy to help.\n\n Regards,\nGiftos",
+            "raj.pitroda.lnxct@gmail.com",
             [email]
         )
         return redirect('shop:contactus')
     return render(request,'home/contact.html')
 
+# ------------- Shoping Func ---------------
 def shop(request):
     category = Category.objects.all()
     products = Product.objects.all()
@@ -44,7 +47,7 @@ def shop(request):
     else:
         products = Product.objects.all()
 
-    # Filter by category
+    # Filter by category and price
     selected_categories = request.GET.getlist('category')
     min_price = request.GET.get('min_price')
     max_price = request.GET.get('max_price')
@@ -64,12 +67,16 @@ def shop(request):
     }
     return render(request,'home/shop.html',context)
 
+# ------------- Testimonial Func ---------------
 def testimonial(request):
     return render(request,'home/testimonial.html')
 
+
+# ------------- Whyus Func ---------------
 def why(request):
     return render(request,'home/why.html')
 
+# ------------- Login Func ---------------
 def Login(request):
     if request.method=='POST':
         form  = ReCaptcha(request.POST)
@@ -87,6 +94,7 @@ def Login(request):
         form = ReCaptcha()    
     return render(request,'login.html',{'form':form})
 
+# ------------- Registration Func ---------------
 def signup(request):
     if request.method == 'POST':
         Register_form = RegisterUser(request.POST)
@@ -97,6 +105,36 @@ def signup(request):
         Register_form = RegisterUser()
     return render(request,'signup.html', {'Register_form': Register_form})
 
+# ------------- Logout Func ---------------
 def Logout(request):
     logout(request)
     return redirect('/')
+
+# ------------- Showing Cart  ---------------
+def viewCart(request):
+    cart = get_object_or_404(Cart, user=request.user)
+    cart_items = CartItem.objects.filter(cart=cart)
+    total_price = sum(item.product.price * item.quantity for item in cart_items)
+    context = {
+        'cart_items': cart_items,
+        'total_price': total_price,
+    }
+    return render(request, 'home/cart.html', context)
+
+# ------------- Adding cart ---------------
+def addcart(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+    if not created:
+        cart_item.quantity += 1
+        cart_item.save()
+    return redirect('shop:viewcart')
+
+# ------------- Removeing cart ---------------
+
+def removecart(request, item_id):
+    cart_item = CartItem.objects.get(id=item_id)
+    cart_item.delete()
+    return redirect('shop:viewcart')
+

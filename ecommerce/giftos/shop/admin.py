@@ -20,4 +20,15 @@ class ProductModelAdmin(admin.ModelAdmin):
 class SliderModelAdmin(admin.ModelAdmin):
     list_display = ["id","name"]
 
-# Register your models here.
+class CartInline(admin.TabularInline):
+    model = CartItem
+    extra = 1
+
+@admin.register(CartItem)
+class CartItemModelAdmin(admin.ModelAdmin):
+    list_display = ["product", "quantity"]
+
+@admin.register(Cart)
+class CartModelAdmin(admin.ModelAdmin):
+    inlines = [CartInline]
+    list_display = ["user"]

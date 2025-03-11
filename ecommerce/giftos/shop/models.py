@@ -11,6 +11,7 @@ class Category(models.Model):
     
 # Product Model
 class Product(models.Model):
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
     price = models.IntegerField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
@@ -75,3 +76,15 @@ class Slider(models.Model):
 
     def __str__(self):
         return self.name
+
+# Cart Model
+class Cart(models.Model):
+    user = models.OneToOneField(user, on_delete=models.CASCADE)
+    products = models.ManyToManyField(Product,through='CartItem')
+    def __str__(self):
+        return self.user.name
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
