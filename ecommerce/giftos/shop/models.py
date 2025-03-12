@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractUser
-from ckeditor.fields import RichTextField
+from django_ckeditor_5.fields import CKEditor5Field
 
 # Category Model
 class Category(models.Model):
@@ -72,7 +72,7 @@ class Contact(models.Model):
 # Slider Model
 class Slider(models.Model):
     name = models.CharField(max_length=200)
-    image = RichTextField()
+    image = CKEditor5Field()
 
     def __str__(self):
         return self.name

@@ -3,7 +3,7 @@ from django.contrib.auth import login,logout,authenticate
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
-from django.conf import settings
+from django.conf import settings    
 from .forms import *
 from .models import *
 
@@ -94,7 +94,7 @@ def Login(request):
         form = ReCaptcha()    
     return render(request,'login.html',{'form':form})
 
-# ------------- Registration Func ---------------
+# ------------- Registration Func ---------------   
 def signup(request):
     if request.method == 'POST':
         Register_form = RegisterUser(request.POST)
@@ -112,9 +112,29 @@ def Logout(request):
 
 # ------------- Showing Cart  ---------------
 def viewCart(request):
-    cart = get_object_or_404(Cart, user=request.user)
-    cart_items = CartItem.objects.filter(cart=cart)
-    total_price = sum(item.product.price * item.quantity for item in cart_items)
+    if request.user.is_authenticated:
+        # User is logged in, retrieve the cart from the database
+        cart = get_object_or_404(Cart, user=request.user)
+        cart_items = CartItem.objects.filter(cart=cart)
+    else:
+        # User is not logged in, retrieve cart items from the session
+        cart_items = request.session.get('cart', [])
+        # Convert session cart items to objects for display
+        cart_items = [
+            {
+                'product': get_object_or_404(Product, id=item['product_id']),
+                'quantity': item['quantity']
+            }
+            for item in cart_items
+        ]
+    
+    # Calculate total price for authenticated users
+    if request.user.is_authenticated:
+        total_price = sum(item.product.price * item.quantity for item in cart_items)
+    else:
+        # For unauthenticated users, we need to calculate the total price based on session data
+        total_price = sum(item['product'].price * item['quantity'] for item in cart_items)
+
     context = {
         'cart_items': cart_items,
         'total_price': total_price,
@@ -124,13 +144,37 @@ def viewCart(request):
 # ------------- Adding cart ---------------
 def addcart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-    cart, created = Cart.objects.get_or_create(user=request.user)
-    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
-    if not created:
-        cart_item.quantity += 1
-        cart_item.save()
-    return redirect('shop:viewcart')
 
+    if request.user.is_authenticated:
+        # User is logged in, use the database cart
+        cart, created = Cart.objects.get_or_create(user=request.user)
+        cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+        
+        if not created:
+            # If the item already exists in the cart, increase the quantity
+            cart_item.quantity += 1
+            cart_item.save()
+    else:
+        # User is not logged in, use the session cart
+        cart = request.session.get('cart', [])
+        
+        # Ensure cart is a list
+        if not isinstance(cart, list):
+            cart = []  # Reset to an empty list if it's not a list
+
+        # Check if the product is already in the session cart
+        for i, item in enumerate(cart):
+            if item.get('product_id') == product_id:
+                cart[i]['quantity'] += 1
+                break
+        else:
+            # If the product is not in the cart, add it
+            cart.append({'product_id': product_id, 'quantity': 1})
+        
+        # Save the updated cart back to the session
+        request.session['cart'] = cart
+    # Redirect to the view cart page
+    return redirect('shop:viewcart')
 # ------------- Removeing cart ---------------
 
 def removecart(request, item_id):
@@ -138,3 +182,19 @@ def removecart(request, item_id):
     cart_item.delete()
     return redirect('shop:viewcart')
 
+def increment(request, item_id):
+    cart_item = get_object_or_404(CartItem, id=item_id)
+    cart_item.quantity += 1
+    cart_item.save()
+    return redirect('shop:viewcart')
+
+def decrement(request, item_id):
+    cart_item = get_object_or_404(CartItem, id=item_id)
+    if cart_item.quantity > 1:
+        cart_item.quantity -= 1
+        cart_item.save()
+    else:
+        cart_item.delete()
+    return redirect('shop:viewcart') 
+
+ 
