@@ -55,11 +55,15 @@ def shop(request):
     if selected_categories:
         products = products.filter(category__id__in=selected_categories)
     
-    if min_price:
-        products = products.filter(price__gte=min_price)
-    
-    if max_price:
-        products = products.filter(price__lte=max_price)
+    if max_price == '20000':
+        products = Product.objects.filter(price__gte=min_price)  # Only filter by min price if max price is 20000+
+    else:   
+        if min_price and max_price:
+            products = products.filter(price__gte=min_price, price__lte=max_price)
+        elif min_price:
+            products = products.filter(price__gte=min_price)
+        elif max_price:
+            products = products.filter(price__lte=max_price)
 
     context = {
         'category': category,
@@ -113,9 +117,13 @@ def Logout(request):
 # ------------- Showing Cart  ---------------
 def viewCart(request):
     if request.user.is_authenticated:
+        cart, created  = Cart.objects.get_or_create(user=request.user)
         # User is logged in, retrieve the cart from the database
         cart = get_object_or_404(Cart, user=request.user)
         cart_items = CartItem.objects.filter(cart=cart)
+
+        if created:
+            pass
     else:
         # User is not logged in, retrieve cart items from the session
         cart_items = request.session.get('cart', [])
@@ -154,6 +162,8 @@ def addcart(request, product_id):
             # If the item already exists in the cart, increase the quantity
             cart_item.quantity += 1
             cart_item.save()
+        else:
+            pass
     else:
         # User is not logged in, use the session cart
         cart = request.session.get('cart', [])
@@ -183,18 +193,36 @@ def removecart(request, item_id):
     return redirect('shop:viewcart')
 
 def increment(request, item_id):
-    cart_item = get_object_or_404(CartItem, id=item_id)
-    cart_item.quantity += 1
-    cart_item.save()
+    if request.user.is_authenticated:
+        cart_item = get_object_or_404(CartItem, id=item_id)
+        cart_item.quantity += 1
+        cart_item.save()
+    else:
+        cart = request.session.get('cart', [])
+        for item in cart:
+            if item['product_id'] == item_id:
+                item['quantity'] += 1
+                break
+        request.session['cart'] = cart
     return redirect('shop:viewcart')
 
 def decrement(request, item_id):
-    cart_item = get_object_or_404(CartItem, id=item_id)
-    if cart_item.quantity > 1:
-        cart_item.quantity -= 1
-        cart_item.save()
+    if request.user.is_authenticated:
+        cart_item = get_object_or_404(CartItem, id=item_id)
+        if cart_item.quantity > 1:
+            cart_item.quantity -= 1
+            cart_item.save()
+        else:
+            cart_item.delete()
     else:
-        cart_item.delete()
-    return redirect('shop:viewcart') 
+        cart = request.session.get('cart', [])
+        for item in cart:                                                     
+            if item['product_id'] == item_id:                             
+                if item['quantity'] > 1:
+                    item['quantity'] -= 1
+                else:
+                    cart.remove(item)
+                break
+        request.session['cart'] = cart
+    return redirect('shop:viewcart')
 
- 

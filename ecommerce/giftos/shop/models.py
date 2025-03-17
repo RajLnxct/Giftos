@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractUser
-from django_ckeditor_5.fields import CKEditor5Field
+from ckeditor.fields import RichTextField
 
 # Category Model
 class Category(models.Model):
@@ -72,7 +72,7 @@ class Contact(models.Model):
 # Slider Model
 class Slider(models.Model):
     name = models.CharField(max_length=200)
-    image = CKEditor5Field()
+    image = RichTextField()
 
     def __str__(self):
         return self.name
@@ -88,3 +88,21 @@ class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
+
+# --------OrderDetails--------
+STATUS_CHOICE = (
+    ('Accepted','Accepted'),
+    ('Packed','Packed'),
+    ('On the Way','On the Way'),
+    ('Delivered','Delivered'),
+    ('Cancel','Cancel'),
+
+)
+class OrderDetails(models.Model):
+    user = models.IntegerField(default=True)
+    product_name = models.CharField(max_length=250)
+    image = models.ImageField(null=True,blank=True)
+    quantity = models.PositiveIntegerField(default=1)
+    price = models.IntegerField()
+    ordered_date = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=50,default="Pending",choices=STATUS_CHOICE)

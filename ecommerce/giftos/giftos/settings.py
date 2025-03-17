@@ -40,9 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'shop',
     'django_recaptcha',
-    'django_ckeditor_5',
-    
+    'ckeditor',
+    'ckeditor_uploader',
+
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -67,6 +69,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                
             ],
         },
     },
@@ -145,11 +148,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CKEDITOR SETTINGS
-CKEDITOR_5_UPLOAD_PATH = "uploads/"
-CKEDITOR_5_IMAGE_BACKEND = "pillow"
-CKEDITOR_5_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'
+CKEDITOR_UPLOAD_PATH = "uploads/"
+CKEDITOR_IMAGE_BACKEND = "pillow"
+CKEDITOR_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'
 
-CKEDITOR_5_CONFIGS = {
+CKEDITOR_CONFIGS = {
     'default':
         {
             'toolbar': 'full',
@@ -160,4 +163,3 @@ CKEDITOR_5_CONFIGS = {
             'uploadUrl': '/ckeditor/upload/',
         },
 }
-   

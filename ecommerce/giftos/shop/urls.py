@@ -17,4 +17,5 @@ urlpatterns = [
     path('removecart/<int:item_id>/', removecart, name='removecart'),
     path('increment/<int:item_id>/', increment, name='increment'),
     path('decrement/<int:item_id>/', decrement, name='decrement'),
+
 ]
