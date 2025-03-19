@@ -226,21 +226,39 @@ def decrement(request, item_id):
         request.session['cart'] = cart
     return redirect('shop:viewcart')
 
-def checkout(request):
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        address = request.POST.get('address')
-        mobile = request.POST.get('mobile')
-        print(name, address, mobile)
-    return render(request, 'home/checkout.html')
-
 @login_required(login_url='shop:login')
-def address(request):
+def order(request):
     user = request.user
     user_details = {
-        'name': user.username,
-        'email': user.email,
-        'address': user.address
+        'name': user.name,
+        'phone': user.phone,
+        'address': user.address,
+        'email': user.email
     }
-    return render(request, 'home/address.html', {'user_details': user_details})
 
+    # Retrieve cart items
+    cart, created = Cart.objects.get_or_create(user=user)
+    cart_items = CartItem.objects.filter(cart=cart)
+    if created:
+        pass
+    # Calculate total price
+    total_price = sum(item.product.price * item.quantity for item in cart_items)
+
+    context = {
+        'user_details': user_details,
+        'cart_items': cart_items,
+        'total_price': total_price,
+    }
+    return render(request, 'home/order.html', context)
+
+def profile(request):
+    if request.method == 'POST':
+        user = request.user
+        user.name = request.POST.get('name')
+        user.email = request.POST.get('email')
+        user.phone = request.POST.get('phone')
+        user.address = request.POST.get('address')
+        user.save()
+        # messages.success(request, 'Profile updated successfully!')
+        return redirect('shop:home')  # Redirect to the home page or any other page
+    # return render(request, 'home/base.html')  # Render a profile page if needed

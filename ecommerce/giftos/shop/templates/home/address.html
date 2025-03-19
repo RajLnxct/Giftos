@@ -10,22 +10,10 @@
     </head>
     <body>
         <h2>Shipping Address</h2>
-        <form action="" method="POST">
-            <div id="address-list">
-                {% for address in addresses %}
-            <p>{{ address.address }}</p>
-            {% endfor %}
-            </div>
-            <button type="button" id="add-address-btn">Add Address</button>
-        </form>
-        <div id="add-address-form-container" style="display: none;">
-            <h3>Add Address</h3>
-            
-            <form id="add-address-form" method="POST" action="{% url 'shop:address' %}">
-                {% csrf_token %}
-                <!-- {{ form.as_p }} -->
-                <button type="submit">Save</button>
-            </form>
+        <div id="address-list">
+            <p><strong>Name : </strong> {{ user_details.name }}</p>
+            <p><strong>Mobile No. </strong> {{ user_details.phone }}</p>
+            <p>{{ user_details.address }}</p>  
         </div>
     </body>
 </html>

@@ -59,17 +59,17 @@
                         <div class="col" style="padding-left:0;">ITEMS {{ cart_items|length }}</div>
                         <div class="col text-right">&#8377; {{ total_price }}</div>
                     </div>
-                    <form>
+                    <!-- <form>
                         <p>SHIPPING</p>
                         <option class="text">Free-Delivery</option>
                         <p>GIVE CODE</p>
                         <input id="code" placeholder="Enter your code">
-                    </form>
+                    </form> -->
                     <div class="row" style="border-top: 1px solid rgba(0,0,0,.1); padding: 2vh 0;">
                         <div class="col">TOTAL PRICE</div>
                         <div class="col text-right">&#8377; {{ total_price }}</div>
                     </div>
-                    <a href="{% url 'shop:address' %}" class="btn btn-primary">Check Out</a>
+                    <a href="{% url 'shop:order' %}" class="btn btn-primary">Check Out</a>
                             {% else %}
                                 <div class="row">
                                     <div class="col text-center">
