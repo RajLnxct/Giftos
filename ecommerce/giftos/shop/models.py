@@ -45,19 +45,21 @@ class UserManager(BaseUserManager):
 
 
 class user(AbstractUser):
-	username = None
-	name = models.CharField(max_length=100, unique=True)	
-	email = models.EmailField(verbose_name='email', max_length=255, unique=True, null=True)
-	password = models.CharField(max_length=100, null=True)
-	password1 = models.CharField(max_length=100, null=True)
+    username = None
+    name = models.CharField(max_length=100, unique=True)    
+    email = models.EmailField(verbose_name='email', max_length=255, unique=True, null=True)
+    phone = models.CharField(max_length=10,blank=True,null=True)
+    address = models.CharField(max_length=250,blank=True,null=True)
+    password = models.CharField(max_length=100, null=True)
+    password1 = models.CharField(max_length=100, null=True)
 
-	USERNAME_FIELD = 'email'
-	REQUIRED_FIELDS = ['name',]  
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['name',]  
 
-	objects = UserManager()
+    objects = UserManager()
 
-	def __str__(self): 
-		return self.name
+    def __str__(self): 
+        return self.name
     
 # Contact Model
 class Contact(models.Model):
@@ -106,3 +108,4 @@ class OrderDetails(models.Model):
     price = models.IntegerField()
     ordered_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=50,default="Pending",choices=STATUS_CHOICE)
+

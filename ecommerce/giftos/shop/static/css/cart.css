@@ -140,9 +140,54 @@ a:hover{
     color: black;
     text-decoration: none;
 }
+
+body {
+    font-family: Arial, sans-serif;
+}
+.progress-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px;
+}
+.step {
+    display: flex;
+    align-items: center;
+    color: #bbb;
+    font-size: 14px;
+    font-weight: bold;
+}
+.step-number {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border: 2px solid #bbb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 5px;
+    background-color: white;
+}
+.step.active .step-number {
+    border-color: #4285F4;
+    color: #4285F4;
+    font-weight: bold;
+}
+.step.active {
+    color: black;
+}
+.step-line {
+    flex-grow: 1;
+    height: 2px;
+    background-color: #bbb;
+    margin: 0 10px;
+}
+
  #code{
     background-image: linear-gradient(to left, rgba(255, 255, 255, 0.253) , rgba(255, 255, 255, 0.185)), url("https://img.icons8.com/small/16/000000/long-arrow-right.png");
     background-repeat: no-repeat;
     background-position-x: 95%;
     background-position-y: center;
 }
+
+

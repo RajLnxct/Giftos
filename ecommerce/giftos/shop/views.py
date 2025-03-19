@@ -184,7 +184,7 @@ def addcart(request, product_id):
         # Save the updated cart back to the session
         request.session['cart'] = cart
     # Redirect to the view cart page
-    return redirect('shop:viewcart')
+    return redirect('shop:shop')
 # ------------- Removeing cart ---------------
 
 def removecart(request, item_id):
@@ -225,4 +225,22 @@ def decrement(request, item_id):
                 break
         request.session['cart'] = cart
     return redirect('shop:viewcart')
+
+def checkout(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        address = request.POST.get('address')
+        mobile = request.POST.get('mobile')
+        print(name, address, mobile)
+    return render(request, 'home/checkout.html')
+
+@login_required(login_url='shop:login')
+def address(request):
+    user = request.user
+    user_details = {
+        'name': user.username,
+        'email': user.email,
+        'address': user.address
+    }
+    return render(request, 'home/address.html', {'user_details': user_details})
 

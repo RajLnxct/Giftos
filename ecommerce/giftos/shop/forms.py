@@ -9,6 +9,8 @@ class RegisterUser(UserCreationForm):
         attrs={'class':'form-control','placeholder':'Enter your Username'}))
     email = forms.EmailField(label='Email',widget=forms.EmailInput(
         attrs={'class':'form-control','placeholder':'Enter your Email'}))
+    phone = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
+    address = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
     password1 = forms.CharField(required=True,label='Password',widget=forms.TextInput(
         attrs={'class':'form-control','type':'password','placeholder':'Enter your Password'}))
     password2 = forms.CharField(required=True,label='Confirm Password',widget=forms.TextInput(
