@@ -19,26 +19,26 @@ var btns = document.querySelector('.home')
 btns.addEventListener('click', function() {
     alert('Thank for your order !');
 }, false);
-$(document).ready(function() {
-    $('#delete').on('show.bs.modal', function(event) {
-        var button = $(event.relatedTarget)
-        var item = button.data('title')
-        var modal = $(this)
-        modal.find('.modal-title').text(item)
-    })
-    $(function() {
-        $('#allList').tab('show')
-    })
-    $(function() {
-        $('#card').tab('show')
-    })
-    $('.icons').click(function() {
-        $(this).toggleClass('iconck').siblings().removeClass('iconck')
-    })
-    $('#turnbf').click(function() {
-        $('#turnbf span').addClass('turn')
-    })
-    $('.turnaf').click(function() {
-        $('.turnaf span').toggleClass('turnb')
-    })
-});
+// $(document).ready(function() {
+//     $('#delete').on('show.bs.modal', function(event) {
+//         var button = $(event.relatedTarget)
+//         var item = button.data('title')
+//         var modal = $(this)
+//         modal.find('.modal-title').text(item)
+//     })
+//     $(function() {
+//         $('#allList').tab('show')
+//     })
+//     $(function() {
+//         $('#card').tab('show')
+//     })
+//     $('.icons').click(function() {
+//         $(this).toggleClass('iconck').siblings().removeClass('iconck')
+//     })
+//     $('#turnbf').click(function() {
+//         $('#turnbf span').addClass('turn')
+//     })
+//     $('.turnaf').click(function() {
+//         $('.turnaf span').toggleClass('turnb')
+//     })
+// });

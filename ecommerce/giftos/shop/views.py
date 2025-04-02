@@ -227,7 +227,7 @@ def decrement(request, item_id):
     return redirect('shop:viewcart')
 
 @login_required(login_url='shop:login')
-def order(request):
+def checkout(request):
     user = request.user
     user_details = {
         'name': user.name,
@@ -249,7 +249,7 @@ def order(request):
         'cart_items': cart_items,
         'total_price': total_price,
     }
-    return render(request, 'home/order.html', context)
+    return render(request, 'home/checkout.html', context)
 
 def profile(request):
     if request.method == 'POST':
@@ -259,6 +259,5 @@ def profile(request):
         user.phone = request.POST.get('phone')
         user.address = request.POST.get('address')
         user.save()
-        # messages.success(request, 'Profile updated successfully!')
         return redirect('shop:home')  # Redirect to the home page or any other page
     # return render(request, 'home/base.html')  # Render a profile page if needed

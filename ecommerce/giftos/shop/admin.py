@@ -32,3 +32,15 @@ class CartItemModelAdmin(admin.ModelAdmin):
 class CartModelAdmin(admin.ModelAdmin):
     inlines = [CartInline]
     list_display = ["user"]
+
+class OrderInline(admin.TabularInline):
+    model = OrderDetails
+
+@admin.register(OrderDetails)
+class OrderDetailsModel(admin.ModelAdmin):
+    list_display = ['product','total','status']
+
+@admin.register(Order)
+class OrderModelAdmin(admin.ModelAdmin):
+    inlines = [OrderInline]
+    list_display = ['user','amount']

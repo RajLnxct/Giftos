@@ -92,6 +92,23 @@ class CartItem(models.Model):
     quantity = models.PositiveIntegerField(default=1)
 
 # --------OrderDetails--------
+
+class Order(models.Model):
+    user = models.ForeignKey(user,on_delete=models.CASCADE)
+    email = models.EmailField()
+    phone = models.CharField(max_length=10)
+    locality = models.CharField(max_length=100,null=True,blank=True)
+    city = models.CharField(max_length=100)
+    pincode = models.CharField(max_length=6)
+    address = models.TextField()
+    amount = models.CharField(max_length=50)
+    payment_id = models.CharField(max_length=300,null=True,blank=True)
+    paid = models.BooleanField(default=False,null=True)
+    date = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user
+
 STATUS_CHOICE = (
     ('Accepted','Accepted'),
     ('Packed','Packed'),
@@ -101,11 +118,13 @@ STATUS_CHOICE = (
 
 )
 class OrderDetails(models.Model):
-    user = models.IntegerField(default=True)
-    product_name = models.CharField(max_length=250)
-    image = models.ImageField(null=True,blank=True)
-    quantity = models.PositiveIntegerField(default=1)
-    price = models.IntegerField()
-    ordered_date = models.DateTimeField(auto_now_add=True)
+    order = models.ForeignKey(Order,on_delete=models.CASCADE)
+    product = models.CharField(max_length=250)
+    image = models.ImageField(upload_to="static/images",null=True,blank=True)
+    quantity = models.CharField(max_length=20)
+    price = models.CharField(max_length=100)
+    total = models.CharField(max_length=100)
     status = models.CharField(max_length=50,default="Pending",choices=STATUS_CHOICE)
 
+    def __str__(self):
+        return self.order.user.user
