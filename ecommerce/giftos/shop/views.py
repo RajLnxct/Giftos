@@ -316,11 +316,8 @@ def thankyou(request):
                 break
 
         user = Order.objects.filter(payment_id=order_id).first()
-        if user:
-            user.paid = True
-            user.save()
-        else:
-            print(f"No Order found with payment_id={order_id}")
+        user.paid = True
+        user.save()
             
     return render(request, 'home/thank-you.html',{'order_id':order_id})
 
@@ -332,5 +329,5 @@ def profile(request):
         user.phone = request.POST.get('phone')
         user.address = request.POST.get('address')
         user.save()
-        return redirect('shop:home')  # Redirect to the home page or any other page
-    # return render(request, 'home/base.html')  # Render a profile page if needed
+        return redirect('shop:home')  
+    
