@@ -45,13 +45,13 @@ class UserManager(BaseUserManager):
 
 
 class user(AbstractUser):
-    username = None
+    username = models.CharField(max_length=100,null=True,blank=True)
     name = models.CharField(max_length=100, unique=True)    
     email = models.EmailField(verbose_name='email', max_length=255, unique=True, null=True)
     phone = models.CharField(max_length=10,blank=True,null=True)
     address = models.CharField(max_length=250,blank=True,null=True)
-    password = models.CharField(max_length=100, null=True)
-    password1 = models.CharField(max_length=100, null=True)
+    password = models.CharField(max_length=100)
+    password1 = models.CharField(max_length=100)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name',]  
@@ -95,6 +95,7 @@ class CartItem(models.Model):
 
 class Order(models.Model):
     user = models.ForeignKey(user,on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
     email = models.EmailField()
     phone = models.CharField(max_length=10)
     locality = models.CharField(max_length=100,null=True,blank=True)
@@ -107,7 +108,7 @@ class Order(models.Model):
     date = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return self.user
+        return self.name
 
 STATUS_CHOICE = (
     ('Accepted','Accepted'),
@@ -127,4 +128,4 @@ class OrderDetails(models.Model):
     status = models.CharField(max_length=50,default="Pending",choices=STATUS_CHOICE)
 
     def __str__(self):
-        return self.order.user.user
+        return self.order.user.name

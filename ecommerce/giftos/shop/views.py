@@ -1,11 +1,15 @@
 from django.shortcuts import render,redirect ,get_object_or_404
 from django.contrib.auth import login,logout,authenticate
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.conf import settings    
 from .forms import *
 from .models import *
+import razorpay
+
+client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID,settings.RAZORPAY_KEY_SECRET))
 
 # ------------- Home Func ---------------
 def home(request):
@@ -183,14 +187,15 @@ def addcart(request, product_id):
         
         # Save the updated cart back to the session
         request.session['cart'] = cart
-    # Redirect to the view cart page
     return redirect('shop:shop')
+
+
 # ------------- Removeing cart ---------------
 
 def removecart(request, item_id):
     cart_item = CartItem.objects.get(id=item_id)
     cart_item.delete()
-    return redirect('shop:viewcart')
+    return redirect('shop:cart')
 
 def increment(request, item_id):
     if request.user.is_authenticated:
@@ -204,7 +209,7 @@ def increment(request, item_id):
                 item['quantity'] += 1
                 break
         request.session['cart'] = cart
-    return redirect('shop:viewcart')
+    return redirect('shop:cart')
 
 def decrement(request, item_id):
     if request.user.is_authenticated:
@@ -224,10 +229,11 @@ def decrement(request, item_id):
                     cart.remove(item)
                 break
         request.session['cart'] = cart
-    return redirect('shop:viewcart')
+    return redirect('shop:cart')
 
 @login_required(login_url='shop:login')
 def checkout(request):
+    
     user = request.user
     user_details = {
         'name': user.name,
@@ -239,17 +245,84 @@ def checkout(request):
     # Retrieve cart items
     cart, created = Cart.objects.get_or_create(user=user)
     cart_items = CartItem.objects.filter(cart=cart)
-    if created:
-        pass
+    
     # Calculate total price
     total_price = sum(item.product.price * item.quantity for item in cart_items)
+    amount = total_price * 100
+    payment = client.order.create({
+        "amount": amount,
+        "currency": "INR",
+        "payment_capture": "1"
+    })
+    order_id = payment['id']
+
+    if request.method == "POST":
+        name = request.POST.get('name')
+        order_id = request.POST.get('order_id')
+        payment = request.POST.get('payment')
+        email = request.POST.get('email')
+        phone = request.POST.get('phone')
+        locality = request.POST.get('locality')
+        city = request.POST.get('city')
+        pin = request.POST.get('pin')
+        address = request.POST.get('address')
+        if address and city and pin and name:  
+            orders = Order(
+                user=user,
+                name=name,
+                email=email,
+                phone=phone,
+                locality=locality,
+                city=city,
+                pincode=pin,
+                address=address,
+                amount=total_price,
+                payment_id=order_id
+            )
+            orders.save()
+            messages.success(request, "Address add successfully")
+        else:
+            messages.error(request, "Error saving address. Please fill all fields.")
+
+        for i in cart_items:
+            item = OrderDetails(
+                order = orders,
+                product = i.product.name,
+                image = i.product.image,
+                quantity = i.quantity,
+                price = i.product.price,
+                total = i.quantity * i.product.price
+            )
+            item.save()
 
     context = {
         'user_details': user_details,
         'cart_items': cart_items,
         'total_price': total_price,
+        'order_id': order_id,
+        'payment': payment,
+        'amount' : amount
     }
     return render(request, 'home/checkout.html', context)
+
+@csrf_exempt
+def thankyou(request):
+    if request.method == "POST":
+        a = request.POST
+        order_id = ""
+        for key, val in a.items():
+            if key == 'razorpay_order_id':
+                order_id = val
+                break
+
+        user = Order.objects.filter(payment_id=order_id).first()
+        if user:
+            user.paid = True
+            user.save()
+        else:
+            print(f"No Order found with payment_id={order_id}")
+            
+    return render(request, 'home/thank-you.html',{'order_id':order_id})
 
 def profile(request):
     if request.method == 'POST':

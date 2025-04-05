@@ -114,6 +114,10 @@ EMAIL_HOST_PASSWORD = 'zsdwbpxfhdafjioe'
 EMAIL_USE_TLS = True
 
 
+RAZORPAY_KEY_ID = 'rzp_test_GxifgXgAGIAXPo'
+RAZORPAY_KEY_SECRET = 'GFLXfk02oryF1RkdpnHsO2Zi'
+
+
 
 AUTH_USER_MODEL = 'shop.user'
 
