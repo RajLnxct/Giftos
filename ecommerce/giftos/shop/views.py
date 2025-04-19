@@ -94,9 +94,11 @@ def Login(request):
             User = authenticate(email=email,password=password)
             if User is not None:
                 login(request,User)
+                messages.success(request,"User Login Successfully!")
                 return redirect('/')
             else:
-                messages.error(request,"Email and Password is incorrect!")
+                # messages.error(request,"Email and Password is incorrect!")
+                pass
 
     else:
         form = ReCaptcha()    
@@ -116,6 +118,7 @@ def signup(request):
 # ------------- Logout Func ---------------
 def Logout(request):
     logout(request)
+    messages.success(request,"User Logout Successfully!")
     return redirect('/')
 
 # ------------- Showing Cart  ---------------

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django_recaptcha',
     'ckeditor',
     'ckeditor_uploader',
+    'django_celery_beat',
 
 ]
 
