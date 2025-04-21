@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractUser
 from ckeditor.fields import RichTextField
+from django.utils import timezone
 
 # Category Model
 class Category(models.Model):
@@ -130,3 +131,14 @@ class OrderDetails(models.Model):
 
     def __str__(self):
         return f"Order by {self.order.user.name} - Product: {self.product}"
+
+
+class AdminNotification(models.Model):
+    message = models.TextField()
+    users = models.ManyToManyField(user, blank=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    is_read = models.BooleanField(default=False)
+    notification_type = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.message

@@ -33,6 +33,7 @@ LOGOUT_REDIRECT_URL = '/'
 
 INSTALLED_APPS = [
     'jazzmin',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -78,6 +79,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'giftos.wsgi.application'
+ASGI_APPLICATION = 'giftos.asgi.application'
 
 
 # Database
@@ -168,4 +170,14 @@ CKEDITOR_CONFIGS = {
             ]),
             'uploadUrl': '/ckeditor/upload/',
         },
+}
+
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
 }

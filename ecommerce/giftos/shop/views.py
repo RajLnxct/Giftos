@@ -15,9 +15,11 @@ client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID,settings.RAZORPAY_KEY_SE
 def home(request):
     product =Product.objects.all()[:10:3]
     slider = Slider.objects.all()
+    notification = AdminNotification.objects.all().order_by('-created_at')
     data = {
         'slider':slider,
-        'product':product
+        'product':product,
+        'notification' : notification
     }
     return render(request,'home/index.html',data)
 

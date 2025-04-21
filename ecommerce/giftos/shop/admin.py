@@ -1,5 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django import forms
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 from .models import *
 
 
@@ -49,5 +52,30 @@ class OrderDetailsModelAdmin(admin.ModelAdmin):
 class OrderModelAdmin(admin.ModelAdmin):
     inlines = [OrderDetailsInline]
     list_display = ['user', 'amount', 'payment_id', 'paid', 'created_at', 'updated_at']
-    list_filter = ['paid', 'created_at', 'updated_at']
-    search_fields = ['user__name', 'email', 'phone', 'payment_id']
+  
+
+class AdminNotificationForm(forms.ModelForm):
+    class Meta:
+        model = AdminNotification
+        fields = ['message', 'notification_type']
+
+@admin.register(AdminNotification)
+class AdminNotificationAdmin(admin.ModelAdmin):
+    form = AdminNotificationForm
+    list_display = ['message', 'notification_type', 'created_at']
+    
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        
+        # Send notification via WebSocket
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            'user_notifications',  # Ensure this matches the group name in your consumer
+            {
+                'type': 'send_notification',  # Ensure this matches the method name in your consumer
+                'message': obj.message,  # Send the actual message from the AdminNotification object
+            }
+    )
+        
+        # Optionally associate with all users
+        obj.users.set(user.objects.all())
