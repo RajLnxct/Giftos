@@ -89,22 +89,17 @@ def why(request):
 # ------------- Login Func ---------------
 def Login(request):
     if request.method=='POST':
-        form  = ReCaptcha(request.POST)
-        if form.is_valid():
-            email = request.POST.get('email')
-            password = request.POST.get('password')
-            User = authenticate(email=email,password=password)
-            if User is not None:
-                login(request,User)
-                messages.success(request,"User Login Successfully!")
-                return redirect('/')
-            else:
-                # messages.error(request,"Email and Password is incorrect!")
-                pass
-
-    else:
-        form = ReCaptcha()    
-    return render(request,'login.html',{'form':form})
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        User = authenticate(email=email,password=password)
+        if User is not None:
+            login(request,User)
+            messages.success(request,"User Login Successfully!")
+            return redirect('/')
+        else:
+            messages.error(request,"Email and Password is incorrect!")
+            return redirect('shop:login')
+    return render(request,'login.html')
 
 # ------------- Registration Func ---------------   
 def signup(request):

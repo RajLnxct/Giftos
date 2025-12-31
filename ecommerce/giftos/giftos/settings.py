@@ -25,7 +25,11 @@ SECRET_KEY = 'django-insecure-(4c_a#6gdwf=thh4!^0i$qxgt0(89-s-*o(p8a&1d7bbzl98cb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
+CSRF_COOKIE_SECURE = False
+
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
 LOGIN_REDIRECT_URL = '/login/'
 LOGOUT_REDIRECT_URL = '/'
@@ -41,7 +45,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'shop',
-    'django_recaptcha',
     'ckeditor',
     'ckeditor_uploader',
     'django_celery_beat',
@@ -113,8 +116,8 @@ AUTH_PASSWORD_VALIDATORS = [
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = "raj.pitroda.lnxct@gmail.com"
-EMAIL_HOST_PASSWORD = 'zsdwbpxfhdafjioe'
+EMAIL_HOST_USER = "xxxxxxx@gmail.com"
+EMAIL_HOST_PASSWORD = 'xxxxxx'
 EMAIL_USE_TLS = True
 
 
@@ -124,9 +127,6 @@ RAZORPAY_KEY_SECRET = 'GFLXfk02oryF1RkdpnHsO2Zi'
 
 
 AUTH_USER_MODEL = 'shop.user'
-
-RECAPTCHA_PUBLIC_KEY = '6Lc8_uIqAAAAADiq4bb64rO93LLtD4wSzeaAZdSR'
-RECAPTCHA_PRIVATE_KEY = '6Lc8_uIqAAAAAGIho2OBL-eoUq5V_TVTZ6Vd6usk'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
